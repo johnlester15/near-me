@@ -47,12 +47,10 @@ function Reveal({ children, delay = 0, direction = "up", className = "" }: {
   );
 }
 
-// ─── Backdrop ────────────────────────────────────────────────────────────────
 function Backdrop({ onClose }: { onClose: () => void }) {
   return <div onClick={onClose} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" />;
 }
 
-// ─── Sign In Modal ────────────────────────────────────────────────────────────
 function SignInModal({ onClose, onSwitch, onSuccess }: {
   onClose: () => void; onSwitch: () => void; onSuccess: (role: "customer" | "professional") => void;
 }) {
