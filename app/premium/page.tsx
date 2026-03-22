@@ -2190,7 +2190,7 @@ export default function ProfessionalDashboard() {
     ],
     [unreadInquiries]
   );
-
+///
   return (
     <div className={theme === "dark" ? "dark" : ""}>
       <div className="min-h-screen bg-[#F8F7F4] dark:bg-gray-950 font-[family-name:var(--font-geist-sans)] overflow-x-hidden transition-colors">
