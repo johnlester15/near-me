@@ -2173,6 +2173,7 @@ export default function ProfessionalDashboard() {
   const cfg = PLAN_CONFIG[plan];
   const PlanIcon = cfg.Icon;
 ///
+///
   const tabs = useMemo<
     ReadonlyArray<{
       key: "dashboard" | "inbox" | "jobs" | "profile";
