@@ -2173,14 +2173,20 @@ export default function ProfessionalDashboard() {
   const cfg = PLAN_CONFIG[plan];
   const PlanIcon = cfg.Icon;
 
-  const tabs = useMemo(
-    () =>
-      [
-        { key: "dashboard", Icon: Home, label: "Dashboard" },
-        { key: "inbox", Icon: Inbox, label: "Inbox", badge: unreadInquiries },
-        { key: "jobs", Icon: CheckSquare, label: "Jobs" },
-        { key: "profile", Icon: User, label: "Profile" },
-      ] as const,
+  const tabs = useMemo<
+    ReadonlyArray<{
+      key: "dashboard" | "inbox" | "jobs" | "profile";
+      Icon: React.ElementType;
+      label: string;
+      badge?: number;
+    }>
+  >(
+    () => [
+      { key: "dashboard", Icon: Home, label: "Dashboard" },
+      { key: "inbox", Icon: Inbox, label: "Inbox", badge: unreadInquiries },
+      { key: "jobs", Icon: CheckSquare, label: "Jobs" },
+      { key: "profile", Icon: User, label: "Profile" },
+    ],
     [unreadInquiries]
   );
 

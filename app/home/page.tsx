@@ -952,7 +952,12 @@ export default function CustomerHome() {
     (searchQuery === "" || a.name.toLowerCase().includes(searchQuery.toLowerCase()) || a.category.toLowerCase().includes(searchQuery.toLowerCase()))
   ).sort((a, b) => ({ premium: 0, pro: 1, basic: 2, free: 3 }[a.plan] - { premium: 0, pro: 1, basic: 2, free: 3 }[b.plan]));
 
-  const navTabs = [
+  const navTabs: ReadonlyArray<{
+    key: NavTab;
+    Icon: React.ElementType;
+    label: string;
+    badge?: number;
+  }> = [
     { key: "home" as NavTab, Icon: Home, label: "Home" },
     { key: "search" as NavTab, Icon: Search, label: "Search" },
     { key: "inbox" as NavTab, Icon: Inbox, label: "Inbox", badge: unreadCount },

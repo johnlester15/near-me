@@ -783,12 +783,17 @@ export default function AdminDashboard() {
 
   const pendingCount = professionals.filter(p => p.status === "pending").length;
 
-  const tabs = [
+  const tabs: ReadonlyArray<{
+    key: "dashboard" | "approvals" | "subscribers" | "ads";
+    Icon: React.ElementType;
+    label: string;
+    badge?: number;
+  }> = [
     { key: "dashboard",   Icon: Home,       label: "Dashboard"    },
     { key: "approvals",   Icon: Shield,     label: "Approvals",   badge: pendingCount },
     { key: "subscribers", Icon: Crown,      label: "Subscribers"  },
     { key: "ads",         Icon: Megaphone,  label: "Ads"          },
-  ] as const;
+  ];
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] font-[family-name:var(--font-geist-sans)]">

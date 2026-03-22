@@ -1000,12 +1000,17 @@ export default function ProfessionalDashboard() {
   const cfg = PLAN_CONFIG[plan];
   const PlanIcon = cfg.Icon;
 
-  const tabs = [
+  const tabs: ReadonlyArray<{
+    key: "dashboard" | "inbox" | "jobs" | "profile";
+    Icon: React.ElementType;
+    label: string;
+    badge?: number;
+  }> = [
     { key: "dashboard", Icon: Home,        label: "Dashboard" },
     { key: "inbox",     Icon: Inbox,       label: "Inbox",    badge: unreadInquiries },
     { key: "jobs",      Icon: CheckSquare, label: "Jobs"      },
     { key: "profile",   Icon: User,        label: "Profile"   },
-  ] as const;
+  ];
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] font-[family-name:var(--font-geist-sans)] overflow-x-hidden">
