@@ -815,10 +815,10 @@ export default function ProfessionalDashboard() {
   useEffect(() => { setMounted(true); }, []);
 
   const tabs = [
-    { key: "dashboard", Icon: Home,        label: "Dashboard" },
+    { key: "dashboard", Icon: Home,        label: "Dashboard", badge: 0 },
     { key: "inbox",     Icon: Inbox,       label: "Inbox",    badge: unreadInquiries },
-    { key: "jobs",      Icon: CheckSquare, label: "Jobs"      },
-    { key: "profile",   Icon: User,        label: "Profile"   },
+    { key: "jobs",      Icon: CheckSquare, label: "Jobs",      badge: 0 },
+    { key: "profile",   Icon: User,        label: "Profile",   badge: 0 },
   ] as const;
 
   return (
