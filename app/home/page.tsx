@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import {
   MapPin, Search, Star, ChevronRight, Bell, LogOut,
   Wrench, Zap, Hammer, Leaf, Paintbrush, SprayCan,
@@ -30,8 +31,8 @@ function useScrollReveal() {
   return { ref, visible };
 }
 
-function Reveal({ children, delay = 0, direction = "up" }: {
-  children: ReactNode; delay?: number; direction?: "up" | "left" | "right" | "fade";
+function Reveal({ children, delay = 0, direction = "up", className = "" }: {
+  children: ReactNode; delay?: number; direction?: "up" | "left" | "right" | "fade"; className?: string;
 }) {
   const { ref, visible } = useScrollReveal();
   const hidden = {
@@ -41,7 +42,7 @@ function Reveal({ children, delay = 0, direction = "up" }: {
     fade: "opacity-0",
   }[direction];
   return (
-    <div ref={ref} className={`transition-all duration-700 ease-out ${visible ? "opacity-100 translate-x-0 translate-y-0" : hidden}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div ref={ref} className={`transition-all duration-700 ease-out ${visible ? "opacity-100 translate-x-0 translate-y-0" : hidden} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
@@ -757,7 +758,7 @@ function SearchTab({ onViewPro }: { onViewPro: (pro: Professional) => void }) {
 
   return (
     <div className="space-y-5">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-lg p-3">
+      <div className="relative z-20 bg-white rounded-2xl border border-gray-100 shadow-lg p-3 overflow-visible">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 h-11 bg-gray-50 rounded-xl px-3 border border-transparent focus-within:border-amber-300 focus-within:bg-white transition-all">
             <Search size={15} className="text-gray-400 shrink-0" />
@@ -766,14 +767,14 @@ function SearchTab({ onViewPro }: { onViewPro: (pro: Professional) => void }) {
             {searchQuery && <button onClick={() => setSearchQuery("")}><X size={13} className="text-gray-400" /></button>}
           </div>
           <div className="flex gap-2">
-            <div className="relative flex-1" ref={locationRef}>
+            <div className="relative z-30 flex-1" ref={locationRef}>
               <button onClick={() => setShowLocationDrop(!showLocationDrop)} className="w-full flex items-center gap-2 h-10 px-3 rounded-xl bg-gray-50 border border-transparent hover:border-amber-300 transition-all text-sm text-gray-600 font-medium">
                 <MapPin size={13} className="text-amber-500 shrink-0" />
                 <span className="truncate">{selectedLocation || "All Locations"}</span>
                 <ChevronDown size={13} className={`text-gray-400 ml-auto shrink-0 transition-transform ${showLocationDrop ? "rotate-180" : ""}`} />
               </button>
               {showLocationDrop && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 z-50 py-1 max-h-48 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] py-1 max-h-48 overflow-y-auto">
                   <button onClick={() => { setSelectedLocation(""); setShowLocationDrop(false); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-50">All Locations</button>
                   {LOCATIONS.map(l => (
                     <button key={l} onClick={() => { setSelectedLocation(l); setShowLocationDrop(false); }} className={`w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors ${selectedLocation === l ? "text-amber-600 font-semibold bg-amber-50" : "text-gray-700"}`}>{l}</button>
@@ -793,7 +794,7 @@ function SearchTab({ onViewPro }: { onViewPro: (pro: Professional) => void }) {
         ))}
       </div>
       <div className="flex items-center gap-1.5"><Filter size={13} className="text-gray-400" /><span className="text-xs text-gray-500 font-medium">{filtered.length} found</span></div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {filtered.map((pro, i) => (
           <Reveal key={pro.id} delay={i * 50} direction="up">
             <ProCard pro={pro} onView={() => onViewPro(pro)} size={pro.sponsored ? "sponsored" : "normal"} />
@@ -870,7 +871,7 @@ function InboxTab() {
 }
 
 // ─── PROFILE TAB ─────────────────────────────────────────────────────────────
-function ProfileTab() {
+function ProfileTab({ onLogout }: { onLogout: () => void }) {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState({ name: "Maria Santos", email: "maria.santos@gmail.com", phone: "+63 912 888 9999", address: "Brgy. Talomo, Davao City" });
@@ -912,7 +913,7 @@ function ProfileTab() {
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Account</p>
         {[{ label: "Notification Settings", Icon: Bell, color: "text-gray-700" }, { label: "Privacy & Security", Icon: Shield, color: "text-gray-700" }, { label: "Help & Support", Icon: MessageSquare, color: "text-gray-700" }, { label: "Sign Out", Icon: LogOut, color: "text-red-500" }].map(({ label, Icon, color }) => (
-          <button key={label} className="w-full flex items-center gap-3 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded-xl px-2 transition-colors group">
+          <button key={label} onClick={label === "Sign Out" ? onLogout : undefined} className="w-full flex items-center gap-3 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded-xl px-2 transition-colors group">
             <div className="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-white flex items-center justify-center shrink-0 transition-colors"><Icon size={14} className={color} /></div>
             <span className={`text-sm font-medium ${color}`}>{label}</span>
             <ArrowRight size={13} className="text-gray-300 ml-auto" />
@@ -925,6 +926,7 @@ function ProfileTab() {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CustomerHome() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [activeNav, setActiveNav] = useState<NavTab>("home");
   const [selectedPro, setSelectedPro] = useState<Professional | null>(null);
@@ -963,6 +965,10 @@ export default function CustomerHome() {
     { key: "inbox" as NavTab, Icon: Inbox, label: "Inbox", badge: unreadCount },
     { key: "profile" as NavTab, Icon: UserCircle, label: "Profile" },
   ];
+
+  const handleLogout = () => {
+    router.push("/");
+  };
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] font-[family-name:var(--font-geist-sans)] overflow-x-hidden">
@@ -1024,22 +1030,22 @@ export default function CustomerHome() {
         {activeNav === "home" && (
           <div className="space-y-8">
             {/* Search */}
-            <Reveal direction="up">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-lg p-3">
+            <Reveal direction="up" className="relative z-40">
+              <div className="relative z-20 bg-white rounded-2xl border border-gray-100 shadow-lg p-3 overflow-visible">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 h-11 bg-gray-50 rounded-xl px-3 border border-transparent focus-within:border-amber-300 focus-within:bg-white transition-all">
                     <Search size={15} className="text-gray-400 shrink-0" />
                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder='e.g. "Plumber", "IT Services"' className="flex-1 text-sm bg-transparent text-gray-700 placeholder-gray-400 focus:outline-none" />
                   </div>
                   <div className="flex gap-2">
-                    <div className="relative flex-1" ref={locationRef}>
+                    <div className="relative z-30 flex-1" ref={locationRef}>
                       <button onClick={() => setShowLocationDrop(!showLocationDrop)} className="w-full flex items-center gap-2 h-10 px-3 rounded-xl bg-gray-50 border border-transparent hover:border-amber-300 transition-all text-sm text-gray-600 font-medium">
                         <MapPin size={13} className="text-amber-500 shrink-0" />
                         <span className="truncate text-sm">{selectedLocation || "All Locations"}</span>
                         <ChevronDown size={13} className={`text-gray-400 ml-auto shrink-0 transition-transform ${showLocationDrop ? "rotate-180" : ""}`} />
                       </button>
                       {showLocationDrop && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 z-50 py-1">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] py-1 max-h-48 overflow-y-auto">
                           <button onClick={() => { setSelectedLocation(""); setShowLocationDrop(false); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-50 font-medium">All Locations</button>
                           {LOCATIONS.map(l => (
                             <button key={l} onClick={() => { setSelectedLocation(l); setShowLocationDrop(false); }} className={`w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors ${selectedLocation === l ? "text-amber-600 font-bold bg-amber-50" : "text-gray-700"}`}>{l}</button>
@@ -1133,7 +1139,7 @@ export default function CustomerHome() {
                   ))}
                 </div>
               </Reveal>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {filteredAdvertisers.map((pro, i) => (
                   <Reveal key={pro.id} delay={i * 50} direction="up">
                     <ProCard pro={pro} onView={() => setSelectedPro(pro)} size={pro.sponsored ? "sponsored" : "normal"} />
@@ -1146,7 +1152,7 @@ export default function CustomerHome() {
 
         {activeNav === "search"  && <SearchTab onViewPro={setSelectedPro} />}
         {activeNav === "inbox"   && <InboxTab />}
-        {activeNav === "profile" && <ProfileTab />}
+        {activeNav === "profile" && <ProfileTab onLogout={handleLogout} />}
       </main>
 
       {/* Mobile bottom nav */}
