@@ -8,8 +8,10 @@
 
 ## Completed Steps
 
-- [x] Created TODO.md
-- [x] Analyzed additional files: shared.tsx (UI utils: animations, cards, banners), dashboard-tab.tsx (stats, subscription card, analytics), subscription-context.tsx (localStorage plan management), mock-data.ts (inquiries/jobs data, status configs)
+- [x] Created/updated TODO.md
+- [x] Analyzed core dashboard: pages (inbox/jobs/billing/dashboard/profile), components (nav/header/shell/tab/shared), context (subscription)
+- [x] Reviewed mock-data.ts, auth/session.ts, proxy.ts, paymongo checkout API
+- [x] Examined profile-tab.tsx (editable profile form), video-manager.tsx (YouTube/upload preview, premium-only), billing/page.tsx (PayMongo integration, plan upgrades)
 
 ## Pending
 
