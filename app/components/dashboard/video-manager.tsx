@@ -36,11 +36,11 @@ export default function VideoManager({ plan, videoUrl, onSave }: VideoManagerPro
   const [saved, setSaved] = useState(false);
 
   const previewUrl = useMemo(() => {
-    if (mode === "upload") return uploadedPreviewUrl;
+    if (mode === "upload") return uploadedPreviewUrl ?? "";
     if (!input.trim()) return "";
     return toEmbedUrl(input.trim());
   }, [input, mode, uploadedPreviewUrl]);
-
+///
   const isYouTubeEmbed = previewUrl.includes("youtube.com/embed/");
 
   useEffect(() => {
