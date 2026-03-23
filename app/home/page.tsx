@@ -529,45 +529,40 @@ function PremiumCard({ pro, onView }: { pro: Professional; onView: () => void })
   const from = pro.accentFrom || "#f59e0b";
   const to   = pro.accentTo   || "#d97706";
   const hasVideo = !!pro.videoUrl;
-  const [mounted, setMounted] = useState(false);
+  const [isVideoActive, setIsVideoActive] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   // Extract YouTube video ID for thumbnail + embed
   const ytId = pro.videoUrl
     ? pro.videoUrl.replace("https://www.youtube.com/embed/","").split("?")[0]
     : null;
 
-  // Build iframe src with all required autoplay params
-  const iframeSrc = hasVideo && ytId 
+  // Build iframe src with autoplay params; iframe is mounted only on hover
+  const iframeSrc = hasVideo && ytId
     ? `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${ytId}&rel=0&playsinline=1&modestbranding=1&showinfo=0&fs=0`
     : "";
-
-  // Only render iframe after client-side mount to trigger autoplay
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <div
       onClick={onView}
+      onMouseEnter={() => {
+        if (hasVideo && iframeSrc) {
+          setIsVideoReady(false);
+          setIsVideoActive(true);
+        }
+      }}
+      onMouseLeave={() => {
+        setIsVideoActive(false);
+        setIsVideoReady(false);
+      }}
       className="nh-lift relative w-full rounded-3xl cursor-pointer overflow-hidden"
       style={{ boxShadow:`0 20px 60px ${from}35, 0 4px 16px rgba(0,0,0,.1)` }}
     >
       {/* ── VIDEO / THUMBNAIL BACKGROUND ── */}
-      <div className="absolute inset-0 z-0">
-        {hasVideo && ytId && iframeSrc && mounted ? (
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {hasVideo && ytId ? (
           <>
-            {/* YouTube iframe autoplaying muted as visual background */}
-            <iframe
-              key={ytId}
-              className="absolute w-[177.78%] h-full left-[-38.89%] top-0"
-              src={iframeSrc}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              frameBorder="0"
-              style={{ pointerEvents: "none" }}
-              title="bg-video"
-            />
-            {/* Fallback thumbnail in case iframe is blocked */}
+            {/* Static thumbnail by default */}
             <div
               className="absolute inset-0"
               style={{
@@ -576,6 +571,20 @@ function PremiumCard({ pro, onView }: { pro: Professional; onView: () => void })
                 backgroundPosition: "center",
               }}
             />
+            {/* On hover, mount iframe so video starts automatically */}
+            {isVideoActive && (
+              <iframe
+                key={`${ytId}-hover`}
+                className={`absolute inset-0 w-full h-full z-[1] scale-[1.35] origin-center transition-opacity duration-300 ${isVideoReady ? "opacity-100" : "opacity-0"}`}
+                src={iframeSrc}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                frameBorder="0"
+                onLoad={() => setIsVideoReady(true)}
+                style={{ pointerEvents: "none" }}
+                title="bg-video"
+              />
+            )}
           </>
         ) : (
           /* Solid gradient fallback if no video */
